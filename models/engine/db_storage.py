@@ -23,32 +23,29 @@ class DBStorage:
     __session = None
 
     def __init__(self):
-        user = getenv('HBNB_MYSQL_USER')
-        password = getenv('HBNB_MYSQL_PWD')
-        host = getenv('HBNB_MYSQL_HOST')
-        database = getenv('HBNB_MYSQL_DB')
-        env = getenv('HBNB_ENV')
-
+        user = getenv("HBNB_MYSQL_USER")
+        pwd = getenv("HBNB_MYSQL_PWD")
+        host = getenv("HBNB_MYSQL_HOST")
+        db = getenv("HBNB_MYSQL_DB")
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
-                                      .format(user, password, host, database),
+                                      .format(user, pwd, host, db),
                                       pool_pre_ping=True)
-        if getenv('HBNB_ENV') == 'test':
+        if getenv('HBNB_ENV') == "test":
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        objects = {}
-        if cls:
-            query = self.__session.query(cls).all()
-            for obj in query:
-                key = "{}.{}".format(type(obj).__name__, obj.id)
-                objects[key] = obj
+        """all method"""
+        new_dict = {}
+        if cls is None:
+            for key, value in classes.items():
+                for obj in self.__session.query(value).all():
+                    key = obj.__class__.__name__ + "." + obj.id
+                    new_dict[key] = obj
         else:
-            for cls in self.classes.values():
-                query = self.__session.query(cls).all()
-                for obj in query:
-                    key = obj.__class__.__name__ + '.' + obj.id
-                    objects[key] = obj
-        return objects
+            for obj in self.__session.query(cls).all():
+                key = obj.__class__.__name__ + "." + obj.id
+                new_dict[key] = obj
+        return new_dict
 
     def new(self, obj):
         self.__session.add(obj)
@@ -57,7 +54,7 @@ class DBStorage:
         self.__session.commit()
 
     def delete(self, obj=None):
-        if obj:
+        if obj is not None:
             self.__session.delete(obj)
 
     def reload(self):
