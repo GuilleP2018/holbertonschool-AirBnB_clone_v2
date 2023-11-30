@@ -53,7 +53,7 @@ class FileStorage:
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
-                    if '__class__' is None:
+                    if FileStorage.__objects[key] is None:
                         continue
                     else:
                         FileStorage.__objects[key] = classes[val['__class__']](
