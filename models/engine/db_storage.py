@@ -4,7 +4,6 @@ Handles the storage when the engine depends on a MySQL database
 """
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from os import getenv
 from models.base_model import Base
 from models.user import User
 from models.place import Place
