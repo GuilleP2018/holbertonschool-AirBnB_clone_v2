@@ -14,6 +14,7 @@ from models.amenity import Amenity
 from models.review import Review
 import os
 
+
 class DBStorage:
     """SqlAlchemy Database Storage"""
     __engine = None
@@ -27,8 +28,8 @@ class DBStorage:
         env = os.getenv('HBNB_ENV')
 
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
-                                       .format(user, password, host, database),
-                                       pool_pre_ping=True)
+                                      .format(user, password, host, database),
+                                      pool_pre_ping=True)
         if env == 'test':
             Base.metadata.drop_all(self.__engine)
 

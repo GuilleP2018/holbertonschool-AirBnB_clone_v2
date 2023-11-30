@@ -12,6 +12,7 @@ if getenv('HBNB_TYPE_STORAGE') == 'db':
 else:
     Base = object
 
+
 class BaseModel:
     """A base class for all hbnb models"""
     id = Column(String(60), unique=True, nullable=False, primary_key=True)
@@ -51,7 +52,8 @@ class BaseModel:
     def to_dict(self):
         """Convert instance into dict format"""
         dictionary = self.__dict__.copy()
-        dictionary['__class__'] = (str(type(self)).split('.')[-1]).split('\'')[0]
+        dictionary['__class__'] = (
+            str(type(self)).split('.')[-1]).split('\'')[0]
         dictionary['created_at'] = self.created_at.isoformat()
         dictionary['updated_at'] = self.updated_at.isoformat()
         dictionary.pop('_sa_instance_state', None)
