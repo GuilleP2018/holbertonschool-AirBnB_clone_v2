@@ -3,15 +3,15 @@
 Handles the storage when the engine depends on a MySQL database
 """
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import scoped_session, sessionmaker
+from os import getenv
 from models.base_model import Base
-from models.user import User
-from models.place import Place
 from models.state import State
 from models.city import City
-from models.amenity import Amenity
+from models.user import User
+from models.place import Place
 from models.review import Review
-import os
+from models.amenity import Amenity
 
 classes = {'State': State, 'City': City, 'User': User,
            'Place': Place, 'Review': Review, 'Amenity': Amenity}
@@ -23,16 +23,16 @@ class DBStorage:
     __session = None
 
     def __init__(self):
-        user = os.getenv('HBNB_MYSQL_USER')
-        password = os.getenv('HBNB_MYSQL_PWD')
-        host = os.getenv('HBNB_MYSQL_HOST')
-        database = os.getenv('HBNB_MYSQL_DB')
-        env = os.getenv('HBNB_ENV')
+        user = getenv('HBNB_MYSQL_USER')
+        password = getenv('HBNB_MYSQL_PWD')
+        host = getenv('HBNB_MYSQL_HOST')
+        database = getenv('HBNB_MYSQL_DB')
+        env = getenv('HBNB_ENV')
 
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
                                       .format(user, password, host, database),
                                       pool_pre_ping=True)
-        if env == 'test':
+        if getenv('HBNB_ENV') == 'test':
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
@@ -46,7 +46,7 @@ class DBStorage:
             for cls in self.classes.values():
                 query = self.__session.query(cls).all()
                 for obj in query:
-                    key = "{}.{}".format(type(obj).__name__, obj.id)
+                    key = obj.__class__.__name__ + '.' + obj.id
                     objects[key] = obj
         return objects
 
